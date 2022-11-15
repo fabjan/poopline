@@ -33,7 +33,7 @@ run_test () {
     log "$test_job: OK"
 }
 
-run_test doesnt_exist
+#skip run_test doesnt_exist # until we can test fails
 run_test echo_works
 run_test redirection_and_diff
 
