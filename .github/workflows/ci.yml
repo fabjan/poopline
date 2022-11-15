@@ -14,3 +14,5 @@ jobs:
           deno-version: v1.x
       - name: Run poopline on test data
         run: test/poopline_test.sh
+      - name: Show test results, if any
+        run: head poopline_test.*/*
