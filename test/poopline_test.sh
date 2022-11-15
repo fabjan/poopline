@@ -4,9 +4,6 @@ set -e
 set -u
 set -o pipefail
 
-# I put on my robe and debugging boots.
-set -x
-
 progname=$(basename "$0")
 
 log() {
