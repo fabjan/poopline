@@ -1,0 +1,3 @@
+[34mrunning: /bin/bash -c echo foo > bar.txt[39m
+[34mrunning: /bin/bash -c echo baz >> bar.txt[39m
+[34mrunning: /bin/bash -c diff <(echo -e "foo\nbaz") bar.txt[39m

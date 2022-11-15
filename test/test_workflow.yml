@@ -1,0 +1,11 @@
+jobs:
+
+  echo_works:
+    steps:
+      - run: echo foo
+
+  redirection_and_diff:
+    steps:
+      - run: echo foo > bar.txt
+      - run: echo baz >> bar.txt
+      - run: diff <(echo -e "foo\nbaz") bar.txt
