@@ -20,8 +20,10 @@ PARENTDIR=$(pwd)
 WORKDIR=$(mktemp -d poopline_test.XXXXXX)
 
 cleanup() {
+    log "Cleaning up..."
     if [ -n "$FAILED_TEST" ]; then
         error "Test failed: $FAILED_TEST"
+        head ./*
         log "Left workdir in place: $WORKDIR"
     else
         cd "$PARENTDIR"
