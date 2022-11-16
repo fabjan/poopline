@@ -13,8 +13,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Lint
-        run: |
-          deno fmt --check poopline.ts
+        run: deno fmt --check poopline.ts
       - name: Get deps
         run: deno cache poopline.ts
       - name: Run poopline on test data
