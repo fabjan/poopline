@@ -1,5 +1,5 @@
 name: CI
-run-name: ${{ github.actor }} is learning GitHub Actions
+run-name: ${{ github.event_name }} from ${{ github.event_name }}
 on: [push]
 
 jobs:
