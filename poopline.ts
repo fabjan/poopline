@@ -8,7 +8,7 @@
  * maybe save you some grepping, copy-pasting and waiting.
  */
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const TAGLINE = `Poopline ${VERSION} - Run CI jobs locally`;
 
 import { parse } from "https://deno.land/std@0.163.0/flags/mod.ts";
@@ -46,6 +46,7 @@ const flagVersion = flag("version", "print version and exit");
 const flagHelp = flag("help", "show this help");
 const flagWorkflow = flag("workflow", "workflow file to run");
 const flagJob = flag("job", "job in workflow to run");
+const flagPreview = flag("preview", "just print what would run");
 const flagYes = flag("yes", "assume yes for all prompts", false);
 const flagVerbose = flag("verbose", "print more information", false);
 const flagQuiet = flag("quiet", "print (almost) nothing", false);
@@ -102,6 +103,7 @@ for (const name of Object.keys(opts)) {
 
 let filename = flagWorkflow(opts);
 let jobname = flagJob(opts);
+const preview = flagPreview(opts);
 const yessir = flagYes(opts);
 const outputLimit = flagOutputLimit(opts);
 const commandShell = flagShell(opts);
@@ -298,6 +300,10 @@ for (const [i, step] of job.steps.entries()) {
     }
     log.debug(JSON.stringify(step));
   }
+}
+
+if (preview) {
+  Deno.exit(0);
 }
 
 if (!yessir) {
