@@ -26,35 +26,55 @@ import {
 
 import YAML from "https://esm.sh/yaml@2.1.3";
 
-type FlagDesc = { name: string; desc: string; defaultValue?: any };
-
-const flags: Map<string, FlagDesc> = new Map();
-
-function flag(name: string, desc: string, defaultValue?: any) {
-  if (flags.has(name)) {
-    throw new Error(`flag ${name} already registered`);
-  }
-  flags.set(name, { name, desc, defaultValue });
-  return (parsed: Record<string, any>) => parsed[name] ?? defaultValue;
-}
-
 //
 // register command line flags
 //
 
+type FlagDesc = {
+  name: string;
+  param: string | null;
+  desc: string;
+  defaultValue?: any;
+};
+
+const flags: Map<string, FlagDesc> = new Map();
+
+function flagP(
+  name: string,
+  param: string | null,
+  desc: string,
+  defaultValue?: any,
+) {
+  if (flags.has(name)) {
+    throw new Error(`flag ${name} already registered`);
+  }
+  flags.set(name, { name, param, desc, defaultValue });
+  return (parsed: Record<string, any>) => parsed[name] ?? defaultValue;
+}
+
+function flag(name: string, desc: string, defaultValue?: any) {
+  return flagP(name, null, desc, defaultValue);
+}
+
 const flagVersion = flag("version", "print version and exit");
-const flagHelp = flag("help", "show this help");
-const flagWorkflow = flag("workflow", "workflow file to run");
-const flagJob = flag("job", "job in workflow to run");
-const flagPreview = flag("preview", "just print what would run");
-const flagYes = flag("yes", "assume yes for all prompts", false);
-const flagVerbose = flag("verbose", "print more information", false);
-const flagQuiet = flag("quiet", "print (almost) nothing", false);
-const flagDebug = flag("debug", "print extra debug information", false);
-const flagShell = flag("shell", "shell to use for commands", "/bin/bash");
-const flagOutputLimit = flag(
+const flagHelp = flag("help", "show this help text and exit");
+const flagWorkflow = flagP("workflow", "filename", "workflow file to run");
+const flagJob = flagP("job", "job_name", "job in workflow to run");
+const flagPreview = flag("preview", "just print what would be run");
+const flagYes = flag("yes", "assume yes for all prompts");
+const flagVerbose = flag("verbose", "print more information");
+const flagQuiet = flag("quiet", "print (almost) nothing");
+const flagDebug = flag("debug", "print extra debug information");
+const flagShell = flagP(
+  "shell",
+  "path",
+  "shell to use for commands",
+  "/bin/bash",
+);
+const flagOutputLimit = flagP(
   "output-limit",
-  "truncate subcommand output after this many bytes",
+  "num_bytes",
+  "truncate subcommand output",
   100 * 1024 * 1024,
 );
 
@@ -67,20 +87,24 @@ function printUsageAndExit(exitCode: number): never {
   console.log("Usage: poopline [options]");
   console.log("");
   console.log("Options:");
-  const longestName = Math.max(
-    ...Array.from(flags.values()).map((f) => f.name.length),
-  );
-  const longestDesc = Math.max(
-    ...Array.from(flags.values()).map((f) => f.desc.length),
-  );
+  let nameWidth = 0;
+  let paramWidth = 0;
+  let descWidth = 0;
+  for (const { name, param, desc } of flags.values()) {
+    nameWidth = Math.max(nameWidth, name.length);
+    paramWidth = Math.max(paramWidth, param?.length ?? 0);
+    descWidth = Math.max(descWidth, desc.length);
+  }
   for (const [_name, flag] of flags.entries()) {
-    const name = flag.name.padEnd(longestName);
+    const name = flag.name.padEnd(nameWidth);
+    let param = flag.param || "";
+    param = param.padEnd(paramWidth);
     let desc = flag.desc;
     if (flag.defaultValue !== undefined) {
-      desc = desc.padEnd(longestDesc);
-      desc = desc + ` (default: ${flag.defaultValue})`;
+      desc = desc.padEnd(descWidth);
+      desc = desc + ` [${flag.defaultValue}]`;
     }
-    console.log(`  --${name}  ${desc}`);
+    console.log(`  --${name} ${param}  ${desc}`);
   }
   Deno.exit(exitCode);
 }
