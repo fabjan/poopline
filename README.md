@@ -12,28 +12,43 @@ maybe save you some grepping, copy-pasting and waiting.
 
 ## Usage
 
-```
-Poopline 0.1.1 - Run CI jobs locally
-Usage: poopline [options]
+You can download and run this script with Deno:
 
-Options:
-  --version       print version and exit
-  --help          show this help
-  --workflow      workflow file to run
-  --job           job in workflow to run
-  --preview       just print what would run
-  --yes           assume yes for all prompts                       (default: false)
-  --verbose       print more information                           (default: false)
-  --quiet         print (almost) nothing                           (default: false)
-  --debug         print extra debug information                    (default: false)
-  --shell         shell to use for commands                        (default: /bin/bash)
-  --output-limit  truncate subcommand output after this many bytes (default: 104857600)
+```
+deno run --allow-read --allow-run https://raw.githubusercontent.com/fabjan/poopline/0.1.2/poopline.ts [options]
 ```
 
-For example, in this repository:
+Or download it first and then run it:
 
 ```shell session
-$ deno run --allow-read poopline.ts --preview
+$ curl https://raw.githubusercontent.com/fabjan/poopline/0.1.2/poopline.ts > ~/bin/poopline
+$ chmod +x ~/bin/poopline
+```
+
+```
+poopline [options]
+```
+
+| Option | Parameter | Description | Default |
+|--------|-----------|-------------|---------|
+| --version |  | print version and exit |  |
+| --help |  | show help text and exit |  |
+| --workflow | filename | workflow file to run |  |
+| --job | job_name | job in workflow to run |  |
+| --preview |  | print what commands would be run without running anything |  |
+| --yes |  | assume yes for all prompts |  |
+| --verbose |  | print more information |  |
+| --quiet |  | print (almost) nothing |  |
+| --debug |  | print extra debug information |  |
+| --shell | path | shell to use for commands | /bin/bash |
+| --output-limit | num_bytes | truncate subcommand output | 104857600 |
+
+### Examples
+
+(`--allow-read` is required for Deno to let Poopline read the workflow file.)
+
+```shell session
+$ deno run --allow-read https://raw.githubusercontent.com/fabjan/poopline/0.1.2/poopline.ts --yes --preview
 No filename provided, trying to find a workflow file (use --workflow)
 Found workflow file .github/workflows/ci.yml
 *(inception)=============================*
@@ -51,8 +66,10 @@ Found workflow file .github/workflows/ci.yml
 $
 ```
 
+(`--allow-run` is required for Deno to let Poopline run the commands.)
+
 ```shell session
-$ deno run --allow-read --allow-run poopline.ts --quiet --yes
+$ deno run --allow-read --allow-run https://raw.githubusercontent.com/fabjan/poopline/0.1.2/poopline.ts --quiet --yes
 No filename provided, trying to find a workflow file (use --workflow)
 Found workflow file .github/workflows/ci.yml
 running: /bin/bash -c deno fmt --check poopline.ts
@@ -69,6 +86,8 @@ $
 
 ## Changelog
 
+### 0.1.2
+* add shebang to script
 ### 0.1.1
 * add --preview flag
 ### 0.1.0
