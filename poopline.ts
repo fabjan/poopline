@@ -1,3 +1,5 @@
+#!/usr/bin/env -S deno run --allow-read --allow-run
+
 /**
  * Poopline - https://github.com/fabjan/poopline
  *
@@ -8,7 +10,7 @@
  * maybe save you some grepping, copy-pasting and waiting.
  */
 
-const VERSION = "0.1.1";
+const VERSION = "0.1.2";
 const TAGLINE = `Poopline ${VERSION} - Run CI jobs locally`;
 
 import { parse } from "https://deno.land/std@0.163.0/flags/mod.ts";
@@ -57,10 +59,13 @@ function flag(name: string, desc: string, defaultValue?: any) {
 }
 
 const flagVersion = flag("version", "print version and exit");
-const flagHelp = flag("help", "show this help text and exit");
+const flagHelp = flag("help", "show help text and exit");
 const flagWorkflow = flagP("workflow", "filename", "workflow file to run");
 const flagJob = flagP("job", "job_name", "job in workflow to run");
-const flagPreview = flag("preview", "just print what would be run");
+const flagPreview = flag(
+  "preview",
+  "print what commands would be run without running anything",
+);
 const flagYes = flag("yes", "assume yes for all prompts");
 const flagVerbose = flag("verbose", "print more information");
 const flagQuiet = flag("quiet", "print (almost) nothing");
@@ -114,6 +119,17 @@ const opts = parse(Deno.args);
 for (const name of Object.keys(opts)) {
   if (name === "_") {
     continue;
+  }
+  // a lazy hack to help keep README and --help in sync
+  if (name === "render-options-markdown") {
+    console.log(`| Option | Parameter | Description | Default |`);
+    console.log(`|--------|-----------|------------|---------|`);
+    for (const [name, { param, desc, defaultValue }] of flags.entries()) {
+      console.log(
+        `| --${name} | ${param || ""} | ${desc} | ${defaultValue || ""} |`,
+      );
+    }
+    Deno.exit(0);
   }
   if (!flags.has(name)) {
     console.error(`unknown option: --${name}`);
