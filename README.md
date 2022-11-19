@@ -21,8 +21,8 @@ deno run --allow-read --allow-run https://raw.githubusercontent.com/fabjan/poopl
 Or download it first and then run it:
 
 ```shell session
-$ curl https://raw.githubusercontent.com/fabjan/poopline/0.1.2/poopline.ts > ~/bin/poopline
-$ chmod +x ~/bin/poopline
+$ curl https://raw.githubusercontent.com/fabjan/poopline/0.1.2/poopline.ts > ~/bin/poopline.ts
+$ chmod +x ~/bin/poopline.ts
 ```
 
 ```
