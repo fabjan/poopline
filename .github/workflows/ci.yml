@@ -1,5 +1,5 @@
 name: CI
-run-name: ${{ github.event_name }} from ${{ github.event_name }}
+run-name: "[${{ github.event_name }}] ${{ github.event.workflow_run.head_commit.message }} (${{ github.github.actor }})"
 on: [push]
 
 jobs:
